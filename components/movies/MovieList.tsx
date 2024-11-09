@@ -2,7 +2,7 @@
 
 import { useFetchMovies } from '@/hooks/useFetchMovies';
 import { MovieWithRatings } from '@/types/movie';
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import MovieItem from './MovieListItem';
 import MovieDetails from './MovieDetails';
 
@@ -12,7 +12,25 @@ const MovieList: React.FC = () => {
 
   const { movies, loading } = useFetchMovies();
 
-  if (loading) return <div>Loading...</div>
+  useEffect(() => {
+    if (loading) {
+      setSelectedMovie(null);
+    }
+  }, [loading]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-xl text-gray-600">Loading...</div>
+      </div>
+    );
+  }
+
+  if (movies.length === 0) return (
+    <div className="flex items-center justify-center min-h-[50vh]">
+      <div className="text-xl text-gray-600">No movies found</div>
+    </div>
+  )
 
   return (
     <div className="flex flex-col md:flex-row gap-8 p-4">
