@@ -1,3 +1,12 @@
+/**
+ * Normalizes rating value to either a decimal or percentage format
+ * @param value - Rating string in format "X/Y" or "Z%"
+ * @param format - Output format: 'percentage' (0-100) or 'decimal' (0-10)
+ * @returns Normalized number value
+ * @example
+ * normalizeRating("4/5") // returns 8.0 (decimal format)
+ * normalizeRating("80%", "percentage") // returns 80.0
+ */
 export const normalizeRating = (
   value: string,
   format: 'percentage' | 'decimal' = 'decimal'
@@ -17,6 +26,13 @@ export const normalizeRating = (
   return Number((value.endsWith('%') ? result / 10 : result * 10).toFixed(2));
 };
 
+/**
+ * Calculates the average rating from an array of rating values
+ * @param ratings - Array of rating objects containing Value property
+ * @returns Average rating as a decimal number (0-10), rounded to 2 decimal places
+ * @example
+ * calculateAverageRating([{ Value: "4/5" }, { Value: "90%" }]) // returns 8.50
+ */
 export const calculateAverageRating = (ratings: { Value: string }[] | undefined): number => {
   const normalizedRatings = ratings?.map(r => normalizeRating(r.Value)) || [];
   if (normalizedRatings.length === 0) return 0;
@@ -25,6 +41,13 @@ export const calculateAverageRating = (ratings: { Value: string }[] | undefined)
   return Number((sum / normalizedRatings.length).toFixed(2));
 };
 
+/**
+ * Normalizes a title string by converting to lowercase and removing special characters
+ * @param title - Input title string
+ * @returns Normalized title string containing only lowercase alphanumeric characters
+ * @example
+ * normalizeTitle("Hello World!") // returns "helloworld"
+ */
 export const normalizeTitle = (title: string): string => {
   return title
     .toLowerCase()
