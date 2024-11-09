@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { fetchMovieRatings } from "@/services/omdb";
 import { MovieWithRatings } from "@/types/movie";
 import { fetchMovies } from "@/services/swapi";
 import { normalizeTitle, calculateAverageRating } from "@/utils";
+import { useSearchParams } from 'next/navigation';
 
 const fetchMovieWithRatings = async (movie: MovieWithRatings) => {
   const ratings = await fetchMovieRatings(movie.title, movie.release_date.split('-')[0]);
@@ -14,16 +15,19 @@ const fetchMovieWithRatings = async (movie: MovieWithRatings) => {
 };
 
 export const useFetchMovies = () => {
+  const [rawMovies, setRawMovies] = useState<MovieWithRatings[]>([]);
   const [movies, setMovies] = useState<MovieWithRatings[]>([]);
   const [loading, setLoading] = useState(true);
+  const searchParams = useSearchParams();
+
+  const searchTerm = useMemo(() => searchParams.get('search') || '', [searchParams]);
+  const orderBy = useMemo(() => searchParams.get('orderBy'), [searchParams]);
 
   useEffect(() => {
     const getMovies = async () => {
       setLoading(true);
       try {
-        const moviesData = await fetchMovies();
-        setMovies(moviesData);
-
+        const moviesData = await fetchMovies(searchTerm);
         const ratingsResults = await Promise.allSettled(
           moviesData.map(fetchMovieWithRatings)
         );
@@ -41,7 +45,7 @@ export const useFetchMovies = () => {
           ...ratingsMap[normalizeTitle(movie.title)]
         }));
 
-        setMovies(updatedMovies);
+        setRawMovies(updatedMovies);
       } catch (error) {
         console.error("Error fetching movies:", error);
       } finally {
@@ -50,10 +54,25 @@ export const useFetchMovies = () => {
     };
 
     getMovies();
-  }, []);
+  }, [searchTerm]);
 
-  return {
-    movies,
-    loading,
-  };
+  useEffect(() => {
+    const sortedMovies = [...rawMovies].sort((a, b) => {
+      switch (orderBy) {
+        case 'year':
+          return a.release_date.localeCompare(b.release_date);
+        case 'rating':
+          const ratingA = a.averageRating || 0;
+          const ratingB = b.averageRating || 0;
+          return ratingB - ratingA;
+        case 'episode':
+        default:
+          return a.episode_id - b.episode_id;
+      }
+    });
+
+    setMovies(sortedMovies);
+  }, [orderBy, rawMovies]);
+
+  return { movies, loading };
 };

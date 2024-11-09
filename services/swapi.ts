@@ -1,7 +1,10 @@
 import { Movie, MovieSchema } from '../types/movie';
 
-export async function fetchMovies(): Promise<Movie[]> {
-  const response = await fetch('https://swapi.dev/api/films/?format=json');
+export async function fetchMovies(search?: string): Promise<Movie[]> {
+  const baseUrl = 'https://swapi.dev/api/films/?format=json';
+  const url = search ? `${baseUrl}&search=${encodeURIComponent(search)}` : baseUrl;
+
+  const response = await fetch(url);
 
   if (!response.ok) {
     throw new Error('Failed to fetch movies');
