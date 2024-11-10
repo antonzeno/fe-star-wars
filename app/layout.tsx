@@ -3,6 +3,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "../components/navbar/Navbar";
 import MoviesProvider from "../providers/MoviesProvider";
+import { Suspense } from "react";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -31,10 +33,12 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <MoviesProvider>
-          <Navbar />
-          {children}
+          <Suspense fallback={<LoadingSpinner />}>
+            <Navbar />
+            {children}
+          </Suspense>
         </MoviesProvider>
-      </body>
-    </html>
+      </body >
+    </html >
   );
 }
