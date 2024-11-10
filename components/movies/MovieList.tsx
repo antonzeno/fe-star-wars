@@ -1,14 +1,14 @@
 "use client"
 
 import React from 'react'
-import { useFetchMovies } from '@/hooks/useFetchMovies';
+import { useMovies } from '@/hooks/useMovies';
 import MovieItem from './MovieListItem';
 import MovieDetails from './MovieDetails';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 
 const MovieList: React.FC = () => {
-  const { movies } = useFetchMovies();
+  const { movies } = useMovies();
   const { selectedMovie, loading } = useSelector((state: RootState) => state.movies);
 
   if (loading) {

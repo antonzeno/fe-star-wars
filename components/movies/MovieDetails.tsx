@@ -27,8 +27,8 @@ const MovieDetails: React.FC = () => {
               loading='lazy'
               src={movie.Poster}
               alt={`${movie.title} image`}
-              width={128}
-              height={192}
+              width={160}
+              height={240}
               className="object-cover rounded mx-auto sm:mx-0"
             />
           )}
