@@ -1,22 +1,15 @@
 "use client"
 
+import React from 'react'
 import { useFetchMovies } from '@/hooks/useFetchMovies';
-import { MovieWithRatings } from '@/types/movie';
-import React, { useState, useEffect } from 'react'
 import MovieItem from './MovieListItem';
 import MovieDetails from './MovieDetails';
-
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
 const MovieList: React.FC = () => {
-  const [selectedMovie, setSelectedMovie] = useState<MovieWithRatings | null>(null)
-
-  const { movies, loading } = useFetchMovies();
-
-  useEffect(() => {
-    if (loading) {
-      setSelectedMovie(null);
-    }
-  }, [loading]);
+  const { movies } = useFetchMovies();
+  const { selectedMovie, loading } = useSelector((state: RootState) => state.movies);
 
   if (loading) {
     return (
@@ -37,18 +30,15 @@ const MovieList: React.FC = () => {
       <div className={`${selectedMovie ? 'md:w-1/2' : 'w-full'}`}>
         <div className="flex flex-col gap-2">
           {movies.map((movie) => (
-            <MovieItem key={`${movie.title}-${movie.release_date}`} movie={movie} selectedMovie={selectedMovie} setSelectedMovie={setSelectedMovie} />
+            <MovieItem
+              key={movie.episode_id}
+              movie={movie}
+            />
           ))}
         </div>
       </div>
 
-      {selectedMovie ? (
-        <MovieDetails movie={selectedMovie} />
-      ) : (
-        <div className="hidden md:block md:w-1/2 p-4 text-gray-500 text-center">
-          Select a movie to view its details
-        </div>
-      )}
+      <MovieDetails />
     </div>
   )
 }

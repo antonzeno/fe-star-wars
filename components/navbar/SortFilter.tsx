@@ -1,7 +1,9 @@
 'use client'
 
-import React, { useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import React, { useState, useRef, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { setOrderBy } from '@/redux/slices/moviesSlice'
+import { RootState } from '@/redux/store'
 
 interface SortOption {
   label: string
@@ -10,8 +12,9 @@ interface SortOption {
 
 export default function SortFilter(): JSX.Element {
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const router = useRouter()
-  const searchParams = useSearchParams()
+  const dropdownRef = useRef<HTMLDivElement>(null)
+  const dispatch = useDispatch()
+  const orderBy = useSelector((state: RootState) => state.movies.orderBy)
 
   const sortOptions: SortOption[] = [
     { value: 'episode', label: 'Episode' },
@@ -20,19 +23,32 @@ export default function SortFilter(): JSX.Element {
   ]
 
   const handleSort = (value: string) => {
-    const params = new URLSearchParams(searchParams.toString())
-    params.set('orderBy', value)
-    router.push(`?${params.toString()}`)
+    dispatch(setOrderBy(value))
     setIsOpen(false)
   }
 
+  useEffect(() => {
+    if (isOpen) {
+      function handleClickOutside(event: MouseEvent) {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+          setIsOpen(false)
+        }
+      }
+
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside)
+      }
+    }
+  }, [isOpen])
+
   return (
-    <div className="relative">
+    <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 text-dark px-4 py-2 bg-white rounded-md hover:bg-gray-300"
       >
-        {`${sortOptions.find(option => option.value === searchParams.get('orderBy'))?.label || 'Sort by...'}`}
+        Sort by...
       </button>
 
       {isOpen && (
@@ -41,7 +57,10 @@ export default function SortFilter(): JSX.Element {
             <button
               key={option.value}
               onClick={() => handleSort(option.value)}
-              className="w-full text-left px-4 py-2 text-dark hover:bg-gray-300 rounded-md"
+              className={`w-full text-left px-4 py-2 rounded-md ${orderBy === option.value
+                ? 'bg-blue-500 text-white'
+                : 'text-dark hover:bg-gray-300'
+                }`}
             >
               {option.label}
             </button>

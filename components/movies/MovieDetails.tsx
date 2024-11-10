@@ -1,13 +1,21 @@
-import { MovieWithRatings } from '@/types/movie';
 import { normalizeRating } from '@/utils';
 import Image from 'next/image';
 import ReactStars from 'react-stars';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
-interface MovieDetailsProps {
-  movie: MovieWithRatings;
-}
+const MovieDetails: React.FC = () => {
+  const movie = useSelector((state: RootState) => state.movies.selectedMovie);
 
-const MovieDetails: React.FC<MovieDetailsProps> = ({ movie }) => {
+  if (!movie) return (
+    <div className=" md:w-1/2 p-4 bg-gray-50 rounded-lg">
+      <div className="flex flex-col items-center justify-center min-h-[300px] gap-4">
+        <p className="text-lg font-medium text-gray-500">Select a movie to view its details</p>
+        <p className="text-sm text-gray-400">Click on any movie from the list to see more information</p>
+      </div>
+    </div>
+  );
+
   return (
     <div className="md:w-1/2">
       <div className="p-4 bg-gray-50 rounded">
@@ -49,7 +57,9 @@ const MovieDetails: React.FC<MovieDetailsProps> = ({ movie }) => {
 
           <div className="flex flex-wrap items-center gap-2">
             {movie.Ratings && movie.Ratings.map((rating) => (
-              <span key={rating.Source} className="text-xs rounded-xl border-2 border-blue-300 text-blue-300 p-1">{rating.Source}: {normalizeRating(rating.Value, 'percentage')}%</span>
+              <span key={rating.Source} className="text-xs rounded-xl border-2 border-blue-300 text-blue-300 p-1">
+                {rating.Source}: {normalizeRating(rating.Value, 'percentage')}%
+              </span>
             ))}
           </div>
         </div>

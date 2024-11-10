@@ -1,9 +1,13 @@
+'use client'
+
 import MovieList from "@/components/movies/MovieList";
+import { store } from "@/redux/store";
+import { Provider } from "react-redux";
 
 export default function MoviesPage() {
   return (
-    <main>
+    <Provider store={store}>
       <MovieList />
-    </main>
+    </Provider>
   );
 }
