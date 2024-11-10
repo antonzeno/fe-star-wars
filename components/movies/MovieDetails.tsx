@@ -19,7 +19,7 @@ const MovieDetails: React.FC = () => {
   return (
     <div className="md:w-1/2">
       <div className="p-4 bg-gray-50 rounded">
-        <h2 className="text-xl font-bold mb-4">{movie.title}</h2>
+        <h2 className="text-center lg:text-left text-xl font-bold mb-4">{movie.title}</h2>
 
         <div className="flex flex-col sm:flex-row gap-4">
           {movie.Poster && (

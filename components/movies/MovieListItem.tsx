@@ -22,22 +22,24 @@ const MovieItem: React.FC<{ movie: MovieWithRatings }> = ({ movie }) => {
       onClick={handleClick}
       className={`p-3 cursor-pointer rounded hover:bg-gray-100 transition-colors w-full
         ${isSelected ? 'bg-gray-100' : ''}
-        flex flex-row items-center gap-4 flex-wrap md:flex-nowrap`}
+        flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4`}
     >
-      <span className="text-sm text-gray-500 whitespace-nowrap">Episode {movie.episode_id}</span>
-      <span className="font-medium flex-1">{movie.title}</span>
-      <div className="flex items-center gap-4 ml-auto whitespace-nowrap">
+      <div className="flex items-center gap-2 w-full sm:w-auto">
+        <span className="text-sm text-gray-500">Episode {movie.episode_id}</span>
+        <span className="font-medium">{movie.title}</span>
+      </div>
+
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 w-full sm:w-auto sm:ml-auto">
         {movie.averageRating && (
           <div className="flex items-center gap-1">
             <ReactStars
               edit={false}
               count={10}
               value={movie.averageRating}
-              size={24}
+              size={20}
               color2={'#ffd700'}
               color1={'#D1D5DB'}
             />
-            <span className="text-sm text-gray-600">{movie.averageRating}</span>
           </div>
         )}
         <span className="text-sm text-gray-600">{movie.release_date}</span>

@@ -14,7 +14,7 @@ const MovieList: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="text-xl text-gray-600">Loading...</div>
+        <div className="text-xl text-gray-600">Fetching movies, please wait...</div>
       </div>
     );
   }
