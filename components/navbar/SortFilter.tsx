@@ -43,7 +43,7 @@ export default function SortFilter(): JSX.Element {
   }, [isOpen])
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative z-10" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 text-dark px-4 py-2 bg-white rounded-md hover:bg-gray-300"

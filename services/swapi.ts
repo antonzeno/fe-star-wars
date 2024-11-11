@@ -1,22 +1,16 @@
-import { Movie, MovieSchema } from '@/types/movie';
-import { cacheService } from '@/utils/cache';
+import { Movie } from '@/types/movie';
 
-const SWAPI_API_URL = 'https://swapi.dev/api/films';
-
-export async function fetchMovies(searchTerm?: string) {
-  const cacheKey = `swapi-movies-${searchTerm || 'all'}`;
-  
-  const cachedData = cacheService.get(cacheKey);
-  if (cachedData) {
-    return MovieSchema.array().parse(cachedData);
+export async function fetchMovies(searchTerm?: string): Promise<Movie[]> {
+  const params = new URLSearchParams();
+  if (searchTerm) {
+    params.append('search', searchTerm);
   }
 
-  const response = await fetch(
-    `${SWAPI_API_URL}/${searchTerm ? `?search=${searchTerm}` : ''}`
-  );
-  const data = await response.json();
-  const movies = data.results.map((movie: Movie) => MovieSchema.parse(movie));
+  const response = await fetch(`/api/movies?${params}`);
   
-  cacheService.set(cacheKey, movies);
-  return movies;
+  if (!response.ok) {
+    throw new Error('Failed to fetch movies');
+  }
+
+  return response.json();
 }
